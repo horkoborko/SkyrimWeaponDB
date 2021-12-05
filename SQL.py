@@ -166,7 +166,6 @@ def createEnchantedWith(connect, enchantedwith):
 	return cursor.lastrowid
 
 # DATA CREATION
-
 # TYPES
 type_onehand_sword = ("One-Handed Sword", 1, 0.75, 1)
 createType(connect, type_onehand_sword)
@@ -176,8 +175,10 @@ type_onehand_mace = ("One-Handed Mace", 0.8, 1, 1)
 createType(connect, type_onehand_mace)
 type_onehand_dagger = ("One-Handed Dagger", 1.3, 0, 0.7)
 createType(connect, type_onehand_dagger)
+# ===Update Speed to 0.75===========================================================================
 type_twohand_sword = ("Two-Handed Sword", 0.7, 1.1, 1.3)
 createType(connect, type_twohand_sword)
+# ==================================================================================================
 type_twohand_axe = ("Two-Handed Axe", 0.7, 1.15, 1.3)
 createType(connect, type_twohand_axe)
 type_twohand_mace = ("Two-Handed Mace", 0.6, 1.25, 1.3)
@@ -286,10 +287,14 @@ createMaterial(connect, material_glass_bow)
 # Ebony
 material_ebony_onehand_sword = ("Ebony", 15, 13, 720, None, "Ebony Smithing")
 createMaterial(connect, material_ebony_onehand_sword)
+# ===Update Damage to 14============================================================================
 material_ebony_onehand_axe = ("Ebony", 17, 15, 865, None, "Ebony Smithing")
 createMaterial(connect, material_ebony_onehand_axe)
+# ==================================================================================================
+# ===Update Damage to 15============================================================================
 material_ebony_onehand_mace = ("Ebony", 19, 16, 1000, None, "Ebony Smithing")
 createMaterial(connect, material_ebony_onehand_mace)
+# ==================================================================================================
 material_ebony_onehand_dagger = ("Ebony", 5, 10, 290, None, "Ebony Smithing")
 createMaterial(connect, material_ebony_onehand_dagger)
 material_ebony_twohand_sword = ("Ebony", 22, 22, 1440, None, "Ebony Smithing")
@@ -449,6 +454,12 @@ weapon_long_bow = ("0003b562", "Long Bow", "Archery", "Long")
 createWeapon(connect, weapon_long_bow)
 weapon_hunting_bow = ("00013985", "Hunting Bow", "Archery", "Hunting")
 createWeapon(connect, weapon_hunting_bow)
+# ===Delete=========================================================================================
+weapon_iron_bow = ("00000000", "Iron Bow", "Archery", "Iron")
+createWeapon(connect, weapon_iron_bow)
+weapon_steel_bow = ("01010101", "Steel Bow", "Archery", "Iron")
+createWeapon(connect, weapon_steel_bow)
+# ==================================================================================================
 weapon_orcish_bow = ("0001398d", "Orcish Bow", "Archery", "Orcish")
 createWeapon(connect, weapon_orcish_bow)
 weapon_dwarven_bow = ("00013995", "Dwarven Bow", "Archery", "Dwarven")
@@ -484,8 +495,106 @@ createForgeability(connect, daedric_forgeability)
 # ENCHANTED WEAPONS
 
 
-# DATA INSERTION, DELETION, AND MODIFICATIONS
+# DATA INSERTION, UPDATES, AND DELETIONS
+# INSERTIONS
+def addDragonbornDLC():
+	# MATERIALS
+	# Nordic
+	material_nordic_onehand_sword = ("Nordic", 12, 11, 290, None, "Advanced Armors")
+	createMaterial(connect, material_nordic_onehand_sword)
+	material_nordic_onehand_axe = ("Nordic", 14, 12, 350, None, "Advanced Armors")
+	createMaterial(connect, material_nordic_onehand_axe)
+	material_nordic_onehand_mace = ("Nordic", 16, 13, 410, None, "Advanced Armors")
+	createMaterial(connect, material_nordic_onehand_mace)
+	material_nordic_onehand_dagger = ("Nordic", 3.5 8, 115, None, "Advanced Armors")
+	createMaterial(connect, material_nordic_onehand_dagger)
+	material_nordic_twohand_sword = ("Nordic", 19, 20, 585, None, "Advanced Armors")
+	createMaterial(connect, material_nordic_twohand_sword)
+	material_nordic_twohand_axe = ("Nordic", 23, 21, 650, None, "Advanced Armors")
+	createMaterial(connect, material_nordic_twohand_axe)
+	material_nordics_twohand_mace = ("Nordic", 27, 23, 700, None, "Advanced Armors")
+	createMaterial(connect, material_nordic_twohand_mace)
+	material_nordic_bow = ("Nordic", 11, 13, 580, 0.6875, "Advanced Armors")
+	createMaterial(connect, material_nordic_bow)
+	# Stalhrim
+	material_stalhrim_onehand_sword = ("Stalhrim", 14, 13, 985, None, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_onehand_sword)
+	material_stalhrim_onehand_axe = ("Stalhrim", 16, 15, 1180, None, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_onehand_axe)
+	material_stalhrim_onehand_mace = ("Stalhrim", 18, 16, 1375, None, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_onehand_mace)
+	material_stalhrim_onehand_dagger = ("Stalhrim", 4.5, 10, 395, None, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_onehand_dagger)
+	material_stalhrim_twohand_sword = ("Stalhrim", 21, 23, 1970, None, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_twohand_sword)
+	material_stalhrim_twohand_axe = ("Stalhrim", 25, 24, 2150, None, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_twohand_axe)
+	material_stalhrim_twohand_mace = ("Stalhrim", 29, 26, 2850, None, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_twohand_mace)
+	material_stalhrim_bow = ("Stalhrim", 15, 17, 1800, 0.5625, "Ebony Smithing")
+	createMaterial(connect, material_stalhrim_bow)
 
+	# WEAPONS
+	# Nordic
+	weapon_nordic_onehand_sword = ("xx01cdb1", "Nordic Sword", "One-Handed Sword", "Nordic")
+	createWeapon(connect, weapon_nordic_onehand_sword)
+	weapon_nordic_onehand_axe = ("xx01cdb2", "Nordic War Axe", "One-Handed Axe", "Nordic")
+	createWeapon(connect, weapon_nordic_onehand_axe)
+	weapon_nordic_onehand_mace = ("xx01cdb0", "Nordic Mace", "One-Handed Mace", "Nordic")
+	createWeapon(connect, weapon_nordic_onehand_mace)
+	weapon_nordic_onehand_dagger = ("xx01cdae", "Nordic Dagger", "One-Handed Dagger", "Nordic")
+	createWeapon(connect, weapon_nordic_onehand_dagger)
+	weapon_nordic_twohand_sword = ("xx01cdaf", "Nordic Greatsword", "Two-Handed Sword", "Nordic")
+	createWeapon(connect, weapon_nordic_twohand_sword)
+	weapon_nordic_twohand_axe = ("xx01cdad", "Nordic Battleaxe", "Two-Handed Axe", "Nordic")
+	createWeapon(connect, weapon_nordic_twohand_axe)
+	weapon_nordic_twohand_mace = ("xx01cdb3", "Nordic Warhammer", "Two-Handed Mace", "Nordic")
+	createWeapon(connect, weapon_nordic_twohand_mace)
+	weapon_nordic_bow = ("xx026232", "Nordic Bow", "Archery", "Nordic")
+	createWeapon(connect, weapon_nordic_bow)
+	# Stalhrim
+	weapon_stalhrim_onehand_sword = ("xx01cdb8", "Stalhrim Sword", "One-Handed Sword", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_onehand_sword)
+	weapon_stalhrim_onehand_axe = ("xx01cdb9", "Stalhrim War Axe", "One-Handed Axe", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_onehand_axe)
+	weapon_stalhrim_onehand_mace = ("xx01cdb7", "Stalhrim Mace", "One-Handed Mace", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_onehand_mace)
+	weapon_stalhrim_onehand_dagger = ("xx01cdb5", "Stalhrim Dagger", "One-Handed Dagger", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_onehand_dagger)
+	weapon_stalhrim_twohand_sword = ("xx01cdb6", "Stalhrim Greatsword", "Two-Handed Sword", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_twohand_sword)
+	weapon_stalhrim_twohand_axe = ("xx01cdb4", "Stalhrim Battleaxe", "Two-Handed Axe", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_twohand_axe)
+	weapon_stalhrim_twohand_mace = ("xx01cdba", "Stalhrim Warhammer", "Two-Handed Mace", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_twohand_mace)
+	weapon_stalhrim_bow = ("xx026231", "Stalhrim Bow", "Archery", "Stalhrim")
+	createWeapon(connect, weapon_stalhrim_bow)
+
+	# FORGEABILITY
+	advanced_armors_forgeability = (18, "Advanced Armors")
+	createForgeability(connect, advanced_armorsforgeability)
+
+def addDawngaurdDLC():
+
+
+# UPDATES
+def updateTwoHandedSwordSpeed(connect):
+	SQL = '''UPDATE type
+			 SET
+			 WHERE '''
+def updateEbonyOneHandedAxe(connect):
+	SQL = '''UPDATE material
+			 SET
+			 WHERE '''
+def updateEbonyOneHandedMace(connect):
+	SQL = '''UPDATE material
+			 SET
+			 WHERE '''
+
+# DELETIONS
+def deleteIronAndSwordBows(connect):
+		SQL = '''DELETE FROM weapon
+				 WHERE '''
 
 # QUERIES
 def selectIronWeapons(connect):
