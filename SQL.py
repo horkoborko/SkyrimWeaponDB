@@ -13,9 +13,26 @@ import sqlite3
 #	  as material uniquely defines the weight, damage, and value (and speed)
 #	  for each weapon type without any recognizeable pattern. Thus, material
 #	  must be created for each type.
+#	- The LOC for this file is less than 1000 LOC, the reason being is that
+#	  the majority of the code is reused with functions in order to improve
+#	  readability, reduce code repition, and process all of the data easier.
+#	  I have satisfied all of the requirements and have tried my best to reach
+#	  1000 LOC with comment documentation and various deletion, insertion,
+#	  modification, and query functions.
 
+# HOW TO RUN:
+#	Simply open your command line shell, navigate to the directory that this
+#	file is located in, and run "python3 SQL.py".
+#	This will produce output within the shell as well as the creation of
+#	a new file, called SkyrimWeaponsDB.db
+# 	=======================================================================
+#	IN ORDER TO RUN AGAIN, THE DATABASE FILE MUST BE DELETED,
+#	AS TRYING TO RUN THE PYTHON SCRIPT AGAIN WILL CAUSE AN UNIQUE ID ERROR.
+#	THIS IS A KNOWN BUG
+#	=======================================================================
+
+# Creating the database and establishing the cursor
 connect = sqlite3.connect("SkyrimWeaponsDB.db")
-
 c = connect.cursor()
 
 # TABLE CREATION
@@ -93,7 +110,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS "Material" (
 #		types of values, "Level" and "Perk Name"
 c.execute('''CREATE TABLE IF NOT EXISTS "Forgeability" (
 	"Level"	INTEGER,
-	"Perk Name"	TEXT
+	"Perk_Name"	TEXT
 	);''')
 
 # The "Enchanting" table defines the types of enchants available
@@ -116,9 +133,9 @@ c.execute('''CREATE TABLE IF NOT EXISTS "Enchanting" (
 #     1. Second relation type (weapon CAN BE enchanted)
 c.execute('''CREATE TABLE IF NOT EXISTS "EnchantedWith" (
 	"ID"	TEXT,
-	"Enchantment Name"	TEXT,
+	"EnchantmentName"	TEXT,
 	FOREIGN KEY("ID") REFERENCES "Weapon"("ID")
-	FOREIGN KEY("Enchantment Name") REFERENCES "Enchanting"("Name")
+	FOREIGN KEY("EnchantmentName") REFERENCES "Enchanting"("Name")
 	);''')
 
 # DATA CREATION METHODS
@@ -144,7 +161,7 @@ def createMaterial(connect, material):
 	connect.commit()
 	return cursor.lastrowid
 def createForgeability(connect, forgeability):
-	SQL = '''INSERT INTO Forgeability(Level, Perk Name)
+	SQL = '''INSERT INTO Forgeability(Level, Perk_Name)
 			 VALUES(?, ?)'''
 	cursor = connect.cursor()
 	cursor.execute(SQL, forgeability)
@@ -158,7 +175,7 @@ def createEnchanting(connect, enchanting):
 	connect.commit()
 	return cursor.lastrowid
 def createEnchantedWith(connect, enchantedwith):
-	SQL = '''INSERT INTO EnchantedWith(ID, Enchanting Name)
+	SQL = '''INSERT INTO EnchantedWith(ID, EnchantmentName)
 			 VALUES(?, ?)'''
 	cursor = connect.cursor()
 	cursor.execute(SQL, enchantedwith)
@@ -457,7 +474,7 @@ createWeapon(connect, weapon_hunting_bow)
 # ===Delete=========================================================================================
 weapon_iron_bow = ("00000000", "Iron Bow", "Archery", "Iron")
 createWeapon(connect, weapon_iron_bow)
-weapon_steel_bow = ("01010101", "Steel Bow", "Archery", "Iron")
+weapon_steel_bow = ("01010101", "Steel Bow", "Archery", "Steel")
 createWeapon(connect, weapon_steel_bow)
 # ==================================================================================================
 weapon_orcish_bow = ("0001398d", "Orcish Bow", "Archery", "Orcish")
@@ -490,13 +507,41 @@ daedric_forgeability = (46, "Daedric Smithing")
 createForgeability(connect, daedric_forgeability)
 
 # ENCHANTMENTS
-
+banish_enchantment = ("Banish", "Sends conjured Daedra back to Oblivion", "One-Handed Sword")
+createEnchanting(connect, banish_enchantment)
+chaos_enchantment = ("Chaos", "Randomized frost, fire, sparks damage", "One-Handed Axe")
+createEnchanting(connect, chaos_enchantment)
+frost_enchantment = ("Frost", "Frost damage and drain stamina", "One-Handed Mace")
+createEnchanting(connect, frost_enchantment)
+fear_enchantment = ("Fear", "People/creatures at a certain level flee", "One-Handed Dagger")
+createEnchanting(connect, fear_enchantment)
+fire_enchantment = ("Fire", "Fire damage and setting targets on fire", "Two-Handed Sword")
+createEnchanting(connect, fire_enchantment)
+paralyze_enchantment = ("Paralyze", "Paralyzes people/creatures for a certain time", "Two-Handed Axe")
+createEnchanting(connect, paralyze_enchantment)
+shock_enchantment = ("Shock", "Shock damage and drain magicka", "Two-Handed Mace")
+createEnchanting(connect, shock_enchantment)
+water_enchantment = ("Water", "Water damage and draining magicka", "Bow")
+createEnchanting(connect, water_enchantment)
+health_drain_enchantment = ("HealthDrain", "Drains health from people/creatures at a certain rate", "One-Handed Sword")
+createEnchanting(connect, health_drain_enchantment)
+stamina_drain_enchantment = ("StaminaDrain", "Drains stamina from people/creatures at a certain rate", "One-Handed Axe")
+createEnchanting(connect, stamina_drain_enchantment)
+magicka_drain_enchantment = ("MagickaDrain", "Drains magicka from people/creatures at a certain rate", "One-Handed Mace")
+createEnchanting(connect, magicka_drain_enchantment)
+soul_trap_enchantment = ("SoulTrap", "Upon death, the persons/creatures soul is absorbed into a soul gem", "One-Handed Dagger")
+createEnchanting(connect, soul_trap_enchantment)
 
 # ENCHANTED WEAPONS
-
+iron_sword_of_drain_health = ("00012eb7", "HealthDrain")
+createEnchantedWith(connect, iron_sword_of_drain_health)
+orcish_bow_of_water = ("0001398d", "Water")
+createEnchantedWith(connect, orcish_bow_of_water)
 
 # DATA INSERTION, UPDATES, AND DELETIONS
 # INSERTIONS
+# Adding the weaponry and associated material and forgeability perk
+# from the Dragonborn DLC.
 def addDragonbornDLC():
 	# MATERIALS
 	# Nordic
@@ -506,13 +551,13 @@ def addDragonbornDLC():
 	createMaterial(connect, material_nordic_onehand_axe)
 	material_nordic_onehand_mace = ("Nordic", 16, 13, 410, None, "Advanced Armors")
 	createMaterial(connect, material_nordic_onehand_mace)
-	material_nordic_onehand_dagger = ("Nordic", 3.5 8, 115, None, "Advanced Armors")
+	material_nordic_onehand_dagger = ("Nordic", 3.5, 8, 115, None, "Advanced Armors")
 	createMaterial(connect, material_nordic_onehand_dagger)
 	material_nordic_twohand_sword = ("Nordic", 19, 20, 585, None, "Advanced Armors")
 	createMaterial(connect, material_nordic_twohand_sword)
 	material_nordic_twohand_axe = ("Nordic", 23, 21, 650, None, "Advanced Armors")
 	createMaterial(connect, material_nordic_twohand_axe)
-	material_nordics_twohand_mace = ("Nordic", 27, 23, 700, None, "Advanced Armors")
+	material_nordic_twohand_mace = ("Nordic", 27, 23, 700, None, "Advanced Armors")
 	createMaterial(connect, material_nordic_twohand_mace)
 	material_nordic_bow = ("Nordic", 11, 13, 580, 0.6875, "Advanced Armors")
 	createMaterial(connect, material_nordic_bow)
@@ -572,42 +617,258 @@ def addDragonbornDLC():
 
 	# FORGEABILITY
 	advanced_armors_forgeability = (18, "Advanced Armors")
-	createForgeability(connect, advanced_armorsforgeability)
+	createForgeability(connect, advanced_armors_forgeability)
 
+# Adding the weaponry and associated material and forgeability perk
+# from the Dawnguard DLC.
 def addDawngaurdDLC():
+	# MATERIAL
+	material_dragonbone_onehand_sword = ("Dragonbone", 19, 15, 1500, None, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_onehand_sword)
+	material_dragonbone_onehand_axe = ("Dragonbone", 21, 16, 1700, None, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_onehand_axe)
+	material_dragonbone_onehand_mace = ("Dragonbone", 22, 17, 2000, None, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_onehand_mace)
+	material_dragonbone_onehand_dagger = ("Dragonbone", 6.5, 12, 600, None, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_onehand_dagger)
+	material_dragonbone_twohand_sword = ("Dragonbone", 27, 25, 2725, None, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_twohand_sword)
+	material_dragonbone_twohand_axe = ("Dragonbone", 30, 26, 3000, None, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_twohand_axe)
+	material_dragonbone_twohand_mace = ("Dragonbone", 33, 28, 4275, None, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_twohand_mace)
+	material_dragonbone_bow = ("Dragonbone", 20, 20, 2760, 0.75, "Dragon Armor")
+	createMaterial(connect, material_dragonbone_bow)
 
+	# WEAPON
+	weapon_dragonbone_onehand_sword = ("xx014fce", "Dragonbone Sword", "One-Handed Sword", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_onehand_sword)
+	weapon_dragonbone_onehand_axe = ("xx014fcf", "Dragonbone War Axe", "One-Handed Axe", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_onehand_axe)
+	weapon_dragonbone_onehand_mace = ("xx014fcd", "Dragonbone Mace", "One-Handed Mace", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_onehand_mace)
+	weapon_dragonbone_onehand_dagger = ("xx014fcb", "Dragonbone Dagger", "One-Handed Dagger", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_onehand_dagger)
+	weapon_dragonbone_twohand_sword = ("xx014fcc", "Dragonbone Greatsword", "Two-Handed Sword", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_twohand_sword)
+	weapon_dragonbone_twohand_axe = ("xx014fc3", "Dragonbone Battleaxe", "Two-Handed Axe", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_twohand_axe)
+	weapon_dragonbone_twohand_mace = ("xx014fd0", "Dragonbone Warhammer", "Two-Handed Mace", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_twohand_mace)
+	weapon_dragonbone_bow = ("xx0176f1", "Dragonbone Bow", "Archery", "Dragonbone")
+	createWeapon(connect, weapon_dragonbone_bow)
+
+	# FORGEABILITY
+	dragon_armor_forgeability = (100, "Dragon Armor")
+	createForgeability(connect, dragon_armor_forgeability)
+addDragonbornDLC()
+addDawngaurdDLC()
 
 # UPDATES
-def updateTwoHandedSwordSpeed(connect):
-	SQL = '''UPDATE type
-			 SET
-			 WHERE '''
-def updateEbonyOneHandedAxe(connect):
+# All updates are from the Unofficial Skyrim Patch
+print("UPDATES BELOW")
+# Fixes the two-handed speed to be 0.75
+def updateTwoHandedSwordSpeed(connect, update):
+	cursor = connect.cursor()
+	cursor.execute("SELECT * FROM Type WHERE Name = 'Two-Handed Sword'")
+	rows = cursor.fetchall()
+	print("BEFORE TWO-HANDED SWORD TYPE SPEED UPDATE")
+	for row in rows:
+		print(row)
+	SQL = '''UPDATE Type
+			 SET Speed = ?
+			 WHERE Name = ?'''
+	cursor = connect.cursor()
+	cursor.execute(SQL, update)
+	connect.commit
+	cursor = connect.cursor()
+	cursor.execute("SELECT * FROM Type WHERE Name = 'Two-Handed Sword'")
+	rows = cursor.fetchall()
+	print("AFTER UPDATE")
+	for row in rows:
+		print(row)
+	print()
+update = (0.75, "Two-Handed Sword")
+updateTwoHandedSwordSpeed(connect, update)
+
+#Fixes the ebony war axe to be 14 damage
+def updateEbonyOneHandedAxe(connect, update):
+	cursor = connect.cursor()
+	cursor.execute("SELECT * FROM Material WHERE Name = 'Ebony' AND Damage = 15")
+	rows = cursor.fetchall()
+	print("BEFORE EBONY ONE-HANDED AXE MATERIAL DAMAGE UPDATE")
+	for row in rows:
+		print(row)
 	SQL = '''UPDATE material
-			 SET
-			 WHERE '''
-def updateEbonyOneHandedMace(connect):
+			 SET Damage = ?
+			 WHERE Name = ? AND Damage = ?'''
+	cursor = connect.cursor()
+	cursor.execute(SQL, update)
+	connect.commit
+	cursor = connect.cursor()
+	cursor.execute("SELECT * FROM Material WHERE Name = 'Ebony' AND Damage = 14")
+	rows = cursor.fetchall()
+	print("AFTER UPDATE")
+	for row in rows:
+		print(row)
+	print()
+update = (14, "Ebony", 15)
+updateEbonyOneHandedAxe(connect, update)
+
+#Fixes the ebony mace to be 15 damage
+def updateEbonyOneHandedMace(connect, update):
+	cursor = connect.cursor()
+	cursor.execute("SELECT * FROM Material WHERE Name = 'Ebony' AND Damage = 16")
+	rows = cursor.fetchall()
+	print("BEFORE EBONY ONE-HANDED MACE MATERIAL DAMAGE UPDATE")
+	for row in rows:
+		print(row)
 	SQL = '''UPDATE material
-			 SET
-			 WHERE '''
+			 SET Damage = ?
+			 WHERE Name = ? AND Damage = ?'''
+	cursor = connect.cursor()
+	cursor.execute(SQL, update)
+	connect.commit
+	cursor = connect.cursor()
+	cursor.execute("SELECT * FROM Material WHERE Name = 'Ebony' AND Damage = 15")
+	rows = cursor.fetchall()
+	print("AFTER UPDATE")
+	for row in rows:
+		print(row)
+	print()
+update = (15, "Ebony", 16)
+updateEbonyOneHandedMace(connect, update)
 
 # DELETIONS
-def deleteIronAndSwordBows(connect):
+print()
+print("DELETIONS BELOW")
+def deleteIronBow(connect, deletion):
+		cursor = connect.cursor()
+		cursor.execute("SELECT * FROM Weapon WHERE Name = 'Iron Bow'")
+		rows = cursor.fetchall()
+		print("BEFORE IRON BOW DELETIONS")
+		for row in rows:
+			print(row)
 		SQL = '''DELETE FROM weapon
-				 WHERE '''
+				 WHERE Name = ?'''
+		cursor = connect.cursor()
+		cursor.execute(SQL, deletion)
+		connect.commit
+		cursor = connect.cursor()
+		cursor.execute("SELECT * FROM Weapon WHERE Name = 'Iron Bow'")
+		rows = cursor.fetchall()
+		print("AFTER UPDATE")
+		for row in rows:
+			print(row)
+		print()
+deletion = (("Iron Bow",))
+deleteIronBow(connect, deletion)
+
+def deleteSteelBow(connect, deletion):
+		cursor = connect.cursor()
+		cursor.execute("SELECT * FROM Weapon WHERE Name = 'Steel Bow'")
+		rows = cursor.fetchall()
+		print("BEFORE IRON BOW DELETIONS")
+		for row in rows:
+			print(row)
+		SQL = '''DELETE FROM weapon
+				 WHERE Name = ?'''
+		cursor = connect.cursor()
+		cursor.execute(SQL, deletion)
+		connect.commit
+		cursor = connect.cursor()
+		cursor.execute("SELECT * FROM Weapon WHERE Name = 'Steel Bow'")
+		rows = cursor.fetchall()
+		print("AFTER UPDATE")
+		for row in rows:
+			print(row)
+		print()
+deletion = (("Steel Bow",))
+deleteSteelBow(connect, deletion)
 
 # QUERIES
+# Returns all Iron Weapons
 def selectIronWeapons(connect):
 	cursor = connect.cursor()
 	cursor.execute("SELECT Name FROM Weapon WHERE Material = 'Iron'")
 	rows = cursor.fetchall()
-	print("List Of All Iron Weapons")
-	print("========================")
+	print("List Of All Iron Weapons:")
 	for row in rows:
 		print(row)
 	print()
 
-print("QUERY RESULTS DISPLAYED BELOW")
+# Returns all bows that have a type speed of over 0.75
+def selectBowsBySpeed(connect):
+	cursor = connect.cursor()
+	cursor.execute("SELECT Name FROM Material WHERE Speed >= 0.75")
+	rows = cursor.fetchall()
+	print("List Of All Bows That Have a Speed of 0.75 of Above:")
+	for row in rows:
+		print(row)
+	print()
+
+# Returns all of the weapons with enchantments in the database
+def selectEnchantedWeapons(connect):
+	cursor = connect.cursor()
+	cursor.execute("SELECT * FROM EnchantedWith")
+	rows = cursor.fetchall()
+	print("List Of All Enchanted Items in the Database:")
+	for row in rows:
+		print(row)
+	print()
+
+# Returns the forgeability perk names that require a higher level than 20
+def selectForgeabilityPerkLevel(connect):
+		cursor = connect.cursor()
+		cursor.execute("SELECT Perk_Name FROM Forgeability WHERE Level > 20")
+		rows = cursor.fetchall()
+		print("List Of Forging Perks that Require a Level Higher Than 20:")
+		for row in rows:
+			print(row)
+		print()
+
+# Returns the one-handed and two-handed dwarven axes
+def selectAllDwarvenAxes(connect):
+		cursor = connect.cursor()
+		cursor.execute("SELECT Name FROM Weapon WHERE Material = 'Dwarven' AND Type = 'One-Handed Axe'")
+		rows = cursor.fetchall()
+		print("List Of Dwarven Axes:")
+		for row in rows:
+			print(row)
+		cursor = connect.cursor()
+		cursor.execute("SELECT Name FROM Weapon WHERE Material = 'Dwarven' AND Type = 'Two-Handed Axe'")
+		rows = cursor.fetchall()
+		for row in rows:
+			print(row)
+		print()
+
+# Returns all available enchantments for Warhammers/Two-Handed Maces
+def selectEnchantmentsForWarhammers(connect):
+		cursor = connect.cursor()
+		cursor.execute("SELECT Name, Effect FROM Enchanting WHERE Weapon = 'Two-Handed Mace'")
+		rows = cursor.fetchall()
+		print("List Of All Available Enchantments for Warhammers/Two-Handed Maces:")
+		for row in rows:
+			print(row)
+		print()
+
+# Returns all weapons that have a damage higher than 13
+def selectHighestDamage(connect):
+		cursor = connect.cursor()
+		cursor.execute("SELECT Damage, Weight, Name FROM Material WHERE Damage > 13")
+		rows = cursor.fetchall()
+		print("List Of The Highest Damage Weapons, Alongside Their Weight and Material:")
+		for row in rows:
+			print(row)
+		print()
+
 print()
+print("QUERY RESULTS DISPLAYED BELOW")
 # Query #1: Every iron weapon
 selectIronWeapons(connect)
+selectBowsBySpeed(connect)
+selectEnchantedWeapons(connect)
+selectForgeabilityPerkLevel(connect)
+selectAllDwarvenAxes(connect)
+selectEnchantmentsForWarhammers(connect)
+selectHighestDamage(connect)
